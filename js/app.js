@@ -20,10 +20,7 @@ function navigateTo(page){
     });
 
     const target =
-
-        document.getElementById(
-            `page-${page}`
-        );
+document.getElementById(page);
 
     if(target){
 
