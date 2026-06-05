@@ -288,3 +288,39 @@ document.addEventListener(
     }
 
 );
+function showPage(page){
+
+    document
+    .querySelectorAll(".page")
+    .forEach(section => {
+
+        section.classList.remove("active");
+
+    });
+
+    const target =
+        document.getElementById(page);
+
+    if(target){
+
+        target.classList.add("active");
+
+    }
+
+}
+
+function openPlayerModal(){
+    openModal("playerModal");
+}
+
+function openTournamentModal(){
+    openModal("tournamentModal");
+}
+
+function openMatchModal(){
+    openModal("matchModal");
+}
+
+function openSeasonModal(){
+    openModal("seasonModal");
+}
