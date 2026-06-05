@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>STUMBLE PRO — Tournament Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-grid"></div>
+  <div class="bg-particles" id="particles"></div>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🏆</div>
+      <div class="logo-text">
+        <span class="logo-main">STUMBLE</span>
+        <span class="logo-sub">PRO</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">MAIN</div>
+      <a class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+        <i class="fas fa-home"></i><span>Dashboard</span>
+      </a>
+      <a class="nav-item" data-page="players" onclick="navigateTo('players')">
+        <i class="fas fa-users"></i><span>Players</span>
+        <span class="nav-badge" id="badge-players">0</span>
+      </a>
+      <a class="nav-item" data-page="leaderboard" onclick="navigateTo('leaderboard')">
+        <i class="fas fa-trophy"></i><span>Leaderboard</span>
+      </a>
+
+      <div class="nav-section-label">COMPETE</div>
+      <a class="nav-item" data-page="tournaments" onclick="navigateTo('tournaments')">
+        <i class="fas fa-crown"></i><span>Tournaments</span>
+        <span class="nav-badge" id="badge-tournaments">0</span>
+      </a>
+      <a class="nav-item" data-page="matches" onclick="navigateTo('matches')">
+        <i class="fas fa-gamepad"></i><span>Matches</span>
+        <span class="nav-badge" id="badge-matches">0</span>
+      </a>
+      <a class="nav-item" data-page="seasons" onclick="navigateTo('seasons')">
+        <i class="fas fa-calendar-alt"></i><span>Seasons</span>
+      </a>
+
+      <div class="nav-section-label">STATS</div>
+      <a class="nav-item" data-page="achievements" onclick="navigateTo('achievements')">
+        <i class="fas fa-medal"></i><span>Achievements</span>
+      </a>
+      <a class="nav-item" data-page="statistics" onclick="navigateTo('statistics')">
+        <i class="fas fa-chart-line"></i><span>Statistics</span>
+      </a>
+      <a class="nav-item" data-page="halloffame" onclick="navigateTo('halloffame')">
+        <i class="fas fa-star"></i><span>Hall of Fame</span>
+      </a>
+
+      <div class="nav-section-label">ADMIN</div>
+      <a class="nav-item" data-page="admin" onclick="navigateTo('admin')">
+        <i class="fas fa-cog"></i><span>Admin Panel</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="save-status" id="saveStatus">
+        <i class="fas fa-cloud-check"></i> All data saved
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Top Bar -->
+  <header class="topbar">
+    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="topbar-title">STUMBLE PRO</div>
+    <div class="topbar-actions">
+      <button class="topbar-btn" onclick="exportData()" title="Export Data">
+        <i class="fas fa-download"></i>
+      </button>
+      <button class="topbar-btn" onclick="navigateTo('admin')" title="Admin">
+        <i class="fas fa-cog"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1 class="page-title">
+          <span class="title-icon">🏠</span> Dashboard
+          <span class="title-badge live-badge" id="liveBadge" style="display:none">● LIVE</span>
+        </h1>
+        <div class="page-subtitle">Welcome to STUMBLE PRO — Your Tournament Hub</div>
+      </div>
+
+      <!-- Quick Stats Row -->
+      <div class="stats-grid" id="dashboardStats">
+        <div class="stat-card" data-color="gold">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value" id="statPlayers">0</div>
+          <div class="stat-label">Total Players</div>
+        </div>
+        <div class="stat-card" data-color="purple">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-value" id="statTournaments">0</div>
+          <div class="stat-label">Tournaments</div>
+        </div>
+        <div class="stat-card" data-color="blue">
+          <div class="stat-icon">🎮</div>
+          <div class="stat-value" id="statMatches">0</div>
+          <div class="stat-label">Matches Played</div>
+        </div>
+        <div class="stat-card" data-color="green">
+          <div class="stat-icon">🥇</div>
+          <div class="stat-value" id="statCups">0</div>
+          <div class="stat-label">Cups Awarded</div>
+        </div>
+      </div>
+
+      <!-- Dashboard Main Grid -->
+      <div class="dashboard-grid">
+
+        <!-- Season Champion -->
+        <div class="glass-card champion-card" id="championCard">
+          <div class="card-header">
+            <span class="card-title">👑 Current Season Champion</span>
+          </div>
+          <div class="champion-body" id="championBody">
+            <div class="empty-state">No season data yet</div>
+          </div>
+        </div>
+
+        <!-- Live Rankings -->
+        <div class="glass-card" id="liveRankingsCard">
+          <div class="card-header">
+            <span class="card-title">🔥 Live Rankings</span>
+            <a class="card-link" onclick="navigateTo('leaderboard')">View All</a>
+          </div>
+          <div id="liveRankingsList" class="mini-list"></div>
+        </div>
+
+        <!-- Recent Matches -->
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-title">🎮 Recent Matches</span>
+            <a class="card-link" onclick="navigateTo('matches')">View All</a>
+          </div>
+          <div id="recentMatchesList" class="mini-list"></div>
+        </div>
+
+        <!-- Upcoming Tournament -->
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-title">📅 Upcoming Tournament</span>
+            <a class="card-link" onclick="navigateTo('tournaments')">View All</a>
+          </div>
+          <div id="upcomingTournamentBlock" class="mini-list"></div>
+        </div>
+
+        <!-- Top Performer -->
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-title">⭐ Top Performers</span>
+          </div>
+          <div id="topPerformersList" class="mini-list"></div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-title">📡 Activity Feed</span>
+          </div>
+          <div id="activityFeed" class="activity-feed"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== PLAYERS PAGE ===== -->
+    <section class="page" id="page-players">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">👥</span> Players</h1>
+        <button class="btn btn-primary" onclick="openModal('addPlayerModal')">
+          <i class="fas fa-plus"></i> Add Player
+        </button>
+      </div>
+      <div class="search-bar-row">
+        <input type="text" class="search-input" id="playerSearch" placeholder="🔍 Search players..." oninput="renderPlayers()"/>
+      </div>
+      <div class="players-grid" id="playersGrid"></div>
+    </section>
+
+    <!-- ===== PLAYER PROFILE PAGE ===== -->
+    <section class="page" id="page-playerprofile">
+      <div class="page-header">
+        <button class="btn btn-ghost" onclick="navigateTo('players')">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <h1 class="page-title" id="profilePlayerName">Player Profile</h1>
+      </div>
+      <div id="playerProfileContent"></div>
+    </section>
+
+    <!-- ===== LEADERBOARD PAGE ===== -->
+    <section class="page" id="page-leaderboard">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🏆</span> Leaderboard</h1>
+      </div>
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchLeaderboardTab('alltime')">All Time</button>
+        <button class="tab-btn" onclick="switchLeaderboardTab('points')">Points</button>
+        <button class="tab-btn" onclick="switchLeaderboardTab('wins')">Wins</button>
+        <button class="tab-btn" onclick="switchLeaderboardTab('cups')">Cups</button>
+        <button class="tab-btn" onclick="switchLeaderboardTab('winrate')">Win Rate</button>
+        <button class="tab-btn" onclick="switchLeaderboardTab('streak')">Streak</button>
+        <button class="tab-btn" onclick="switchLeaderboardTab('elo')">ELO</button>
+      </div>
+      <div id="leaderboardTable" class="leaderboard-table"></div>
+    </section>
+
+    <!-- ===== TOURNAMENTS PAGE ===== -->
+    <section class="page" id="page-tournaments">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">👑</span> Tournaments</h1>
+        <button class="btn btn-primary" onclick="openModal('addTournamentModal')">
+          <i class="fas fa-plus"></i> Create
+        </button>
+      </div>
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="filterTournaments('all')">All</button>
+        <button class="tab-btn" onclick="filterTournaments('upcoming')">Upcoming</button>
+        <button class="tab-btn" onclick="filterTournaments('live')">Live</button>
+        <button class="tab-btn" onclick="filterTournaments('completed')">Completed</button>
+      </div>
+      <div class="tournaments-grid" id="tournamentsGrid"></div>
+    </section>
+
+    <!-- ===== MATCHES PAGE ===== -->
+    <section class="page" id="page-matches">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🎮</span> Matches</h1>
+        <button class="btn btn-primary" onclick="openModal('addMatchModal')">
+          <i class="fas fa-plus"></i> Record Match
+        </button>
+      </div>
+      <div class="search-bar-row">
+        <input type="text" class="search-input" id="matchSearch" placeholder="🔍 Search by player, tournament, map..." oninput="renderMatches()"/>
+      </div>
+      <div id="matchesTable" class="matches-table"></div>
+    </section>
+
+    <!-- ===== SEASONS PAGE ===== -->
+    <section class="page" id="page-seasons">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">📅</span> Seasons</h1>
+        <button class="btn btn-primary" onclick="openModal('addSeasonModal')">
+          <i class="fas fa-plus"></i> New Season
+        </button>
+      </div>
+      <div id="seasonsGrid" class="seasons-grid"></div>
+    </section>
+
+    <!-- ===== ACHIEVEMENTS PAGE ===== -->
+    <section class="page" id="page-achievements">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🏅</span> Achievements</h1>
+      </div>
+      <div class="search-bar-row">
+        <select class="search-input" id="achievementPlayerFilter" onchange="renderAchievements()" style="max-width:250px">
+          <option value="all">All Players</option>
+        </select>
+      </div>
+      <div id="achievementsGallery" class="achievements-gallery"></div>
+    </section>
+
+    <!-- ===== STATISTICS PAGE ===== -->
+    <section class="page" id="page-statistics">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">📈</span> Statistics</h1>
+      </div>
+      <div class="charts-grid">
+        <div class="glass-card chart-card">
+          <div class="card-header"><span class="card-title">Wins Over Time</span></div>
+          <canvas id="chartWinsOverTime"></canvas>
+        </div>
+        <div class="glass-card chart-card">
+          <div class="card-header"><span class="card-title">Points Distribution</span></div>
+          <canvas id="chartPointsDist"></canvas>
+        </div>
+        <div class="glass-card chart-card">
+          <div class="card-header"><span class="card-title">Tournament Performance</span></div>
+          <canvas id="chartTournamentPerf"></canvas>
+        </div>
+        <div class="glass-card chart-card">
+          <div class="card-header"><span class="card-title">Player Win Rates</span></div>
+          <canvas id="chartWinRates"></canvas>
+        </div>
+      </div>
+      <div class="glass-card" style="margin-top:1.5rem">
+        <div class="card-header"><span class="card-title">🤖 Smart Insights</span></div>
+        <div id="smartInsights" class="insights-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===== HALL OF FAME PAGE ===== -->
+    <section class="page" id="page-halloffame">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">⭐</span> Hall of Fame</h1>
+      </div>
+      <div id="hallOfFameContent"></div>
+    </section>
+
+    <!-- ===== ADMIN PAGE ===== -->
+    <section class="page" id="page-admin">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">⚙️</span> Admin Panel</h1>
+      </div>
+      <div class="admin-grid">
+
+        <div class="glass-card">
+          <div class="card-header"><span class="card-title">⚡ Points System</span></div>
+          <div class="admin-points-form" id="pointsSystemForm">
+            <div class="points-row">
+              <label>🥇 1st Place</label>
+              <input type="number" id="pts1" value="10" class="admin-input" onchange="savePointsSystem()"/>
+            </div>
+            <div class="points-row">
+              <label>🥈 2nd Place</label>
+              <input type="number" id="pts2" value="7" class="admin-input" onchange="savePointsSystem()"/>
+            </div>
+            <div class="points-row">
+              <label>🥉 3rd Place</label>
+              <input type="number" id="pts3" value="5" class="admin-input" onchange="savePointsSystem()"/>
+            </div>
+            <div class="points-row">
+              <label>4️⃣ 4th Place</label>
+              <input type="number" id="pts4" value="3" class="admin-input" onchange="savePointsSystem()"/>
+            </div>
+            <div class="points-row">
+              <label>5th+</label>
+              <input type="number" id="pts5" value="1" class="admin-input" onchange="savePointsSystem()"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header"><span class="card-title">💾 Data Management</span></div>
+          <div class="admin-actions">
+            <button class="btn btn-primary" onclick="exportData()"><i class="fas fa-download"></i> Export JSON</button>
+            <button class="btn btn-secondary" onclick="importDataPrompt()"><i class="fas fa-upload"></i> Import JSON</button>
+            <button class="btn btn-danger" onclick="confirmClearData()"><i class="fas fa-trash"></i> Clear All Data</button>
+            <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(event)"/>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header"><span class="card-title">📊 Database Summary</span></div>
+          <div id="adminDbSummary" class="admin-summary"></div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header"><span class="card-title">🔄 Recalculate</span></div>
+          <div class="admin-actions">
+            <button class="btn btn-secondary" onclick="recalculateAll()"><i class="fas fa-sync"></i> Recalculate All Stats</button>
+            <button class="btn btn-secondary" onclick="recalculateElo()"><i class="fas fa-calculator"></i> Recalculate ELO</button>
+            <button class="btn btn-secondary" onclick="checkAchievements()"><i class="fas fa-medal"></i> Re-check Achievements</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== MODALS ========== -->
+
+  <!-- Add Player Modal -->
+  <div class="modal-overlay" id="addPlayerModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>👤 Add New Player</h2>
+        <button class="modal-close" onclick="closeModal('addPlayerModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Player Name *</label>
+          <input type="text" id="newPlayerName" class="form-input" placeholder="Full Name"/>
+        </div>
+        <div class="form-group">
+          <label>Username *</label>
+          <input type="text" id="newPlayerUsername" class="form-input" placeholder="@username"/>
+        </div>
+        <div class="form-group">
+          <label>Nickname</label>
+          <input type="text" id="newPlayerNickname" class="form-input" placeholder="Nickname"/>
+        </div>
+        <div class="form-group">
+          <label>Player ID</label>
+          <input type="text" id="newPlayerId" class="form-input" placeholder="Player ID"/>
+        </div>
+        <div class="form-group">
+          <label>Profile Picture URL</label>
+          <input type="url" id="newPlayerPic" class="form-input" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label>Join Date</label>
+          <input type="date" id="newPlayerJoinDate" class="form-input"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('addPlayerModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="addPlayer()">Add Player</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Tournament Modal -->
+  <div class="modal-overlay" id="addTournamentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>🏆 Create Tournament</h2>
+        <button class="modal-close" onclick="closeModal('addTournamentModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Tournament Name *</label>
+          <input type="text" id="newTournamentName" class="form-input" placeholder="Tournament Name"/>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="newTournamentType" class="form-input">
+            <option value="tournament">Tournament</option>
+            <option value="cup">Cup</option>
+            <option value="series">Series</option>
+            <option value="league">League</option>
+            <option value="championship">Championship</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="newTournamentDesc" class="form-input" rows="2" placeholder="Description..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" id="newTournamentStart" class="form-input"/>
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="date" id="newTournamentEnd" class="form-input"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prize</label>
+            <input type="text" id="newTournamentPrize" class="form-input" placeholder="e.g. Gold Trophy"/>
+          </div>
+          <div class="form-group">
+            <label>Max Players</label>
+            <input type="number" id="newTournamentMaxPlayers" class="form-input" value="8"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="newTournamentStatus" class="form-input">
+            <option value="upcoming">Upcoming</option>
+            <option value="live">Live</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Season</label>
+          <select id="newTournamentSeason" class="form-input">
+            <option value="">No Season</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('addTournamentModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="addTournament()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Match Modal -->
+  <div class="modal-overlay" id="addMatchModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2>🎮 Record Match</h2>
+        <button class="modal-close" onclick="closeModal('addMatchModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tournament *</label>
+            <select id="matchTournament" class="form-input"></select>
+          </div>
+          <div class="form-group">
+            <label>Round</label>
+            <input type="text" id="matchRound" class="form-input" placeholder="e.g. Final, Semi-Final"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Match Date *</label>
+            <input type="date" id="matchDate" class="form-input"/>
+          </div>
+          <div class="form-group">
+            <label>Map Name</label>
+            <input type="text" id="matchMap" class="form-input" placeholder="Map name"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="matchNotes" class="form-input" rows="2" placeholder="Match notes..."></textarea>
+        </div>
+        <div class="card-header" style="margin:1rem 0 0.5rem;padding:0"><span class="card-title">Rankings</span></div>
+        <div id="matchRankingsForm" class="match-rankings-form"></div>
+        <button class="btn btn-ghost" style="margin-top:0.5rem" onclick="addMatchRankingRow()">
+          <i class="fas fa-plus"></i> Add Player
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('addMatchModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="recordMatch()">Record Match</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Season Modal -->
+  <div class="modal-overlay" id="addSeasonModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>📅 New Season</h2>
+        <button class="modal-close" onclick="closeModal('addSeasonModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Season Name *</label>
+          <input type="text" id="newSeasonName" class="form-input" placeholder="e.g. Season 1"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" id="newSeasonStart" class="form-input"/>
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="date" id="newSeasonEnd" class="form-input"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="newSeasonStatus" class="form-input">
+            <option value="active">Active</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('addSeasonModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="addSeason()">Create Season</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Dialog -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2 id="confirmTitle">Confirm</h2>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage">Are you sure?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Cancel</button>
+        <button class="btn btn-danger" id="confirmBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/players.js"></script>
+  <script src="js/tournaments.js"></script>
+  <script src="js/matches.js"></script>
+  <script src="js/leaderboard.js"></script>
+  <script src="js/achievements.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
