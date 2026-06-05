@@ -1,75 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STUMBLE PRO v2</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUMBLE PRO</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-<header class="topbar">
-  <h1>🏆 STUMBLE PRO</h1>
-</header>
+<!-- SIDEBAR -->
 
-<aside class="sidebar">
-  <ul>
-    <li>Dashboard</li>
-    <li>Players</li>
-    <li>Tournaments</li>
-    <li>Matches</li>
-    <li>Seasons</li>
-    <li>Achievements</li>
-    <li>Statistics</li>
-    <li>Hall of Fame</li>
-    <li>Admin</li>
-  </ul>
-</aside>
+<div class="sidebar">
 
-<main>
-  <section id="dashboard">
-    <h2>Dashboard</h2>
-    <div id="stats"></div>
-  </section>
+    <div class="logo">
+        🏆 STUMBLE PRO
+    </div>
 
-  <section id="players">
-    <h2>Players</h2>
-    <div id="playersGrid"></div>
-  </section>
+    <ul>
+        <li onclick="showPage('dashboard')">
+            <i class="fas fa-home"></i>
+            Dashboard
+        </li>
 
-  <section id="tournaments">
-    <h2>Tournaments</h2>
-    <div id="tournamentsGrid"></div>
-  </section>
+        <li onclick="showPage('players')">
+            <i class="fas fa-users"></i>
+            Players
+        </li>
 
-  <section id="matches">
-    <h2>Matches</h2>
-    <div id="matchesTable"></div>
-  </section>
+        <li onclick="showPage('leaderboard')">
+            <i class="fas fa-trophy"></i>
+            Leaderboard
+        </li>
 
-  <section id="seasons">
-    <h2>Seasons</h2>
-  </section>
+        <li onclick="showPage('tournaments')">
+            <i class="fas fa-crown"></i>
+            Tournaments
+        </li>
 
-  <section id="achievements">
-    <h2>Achievements</h2>
-  </section>
+        <li onclick="showPage('matches')">
+            <i class="fas fa-gamepad"></i>
+            Matches
+        </li>
 
-  <section id="statistics">
-    <h2>Statistics</h2>
-    <canvas id="mainChart"></canvas>
-  </section>
+        <li onclick="showPage('seasons')">
+            <i class="fas fa-calendar"></i>
+            Seasons
+        </li>
 
-  <section id="halloffame">
-    <h2>Hall of Fame</h2>
-  </section>
+        <li onclick="showPage('achievements')">
+            <i class="fas fa-medal"></i>
+            Achievements
+        </li>
 
-  <section id="admin">
-    <h2>Admin Panel</h2>
-  </section>
-</main>
+        <li onclick="showPage('statistics')">
+            <i class="fas fa-chart-line"></i>
+            Statistics
+        </li>
 
-<script src="js/app.js"></script>
+        <li onclick="showPage('halloffame')">
+            <i class="fas fa-star"></i>
+            Hall Of Fame
+        </li>
+
+        <li onclick="showPage('admin')">
+            <i class="fas fa-cog"></i>
+            Admin
+        </li>
+    </ul>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="page active">
+
+    <h1>Dashboard</h1>
+
+    <div class="stats-grid">
+
+        <div class="card">
+            <h3>Total Players</h3>
+            <span id="totalPlayers">0</span>
+        </div>
+
+        <div class="card">
+            <h3>Total Tournaments</h3>
+            <span id="totalTournaments">0</span>
+        </div>
+
+        <div class="card">
+            <h3>Total Matches</h3>
+            <span id="totalMatches">0</span>
+        </div>
+
+        <div class="card">
+            <h3>Current Champion</h3>
+            <span id="currentChampion">---</span>
+        </div>
+
+    </div>
+
+    <div class="dashboard-row">
+
+        <div class="panel">
+            <h2>Live Rankings</h2>
+            <div id="liveRankings"></div>
+        </div>
+
+        <div class="panel">
+            <h2>Recent Matches</h2>
+            <div id="recentMatches"></div>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- PLAYERS -->
+
+<section id="players" class="page">
+
+    <div class="section-header">
+        <h1>Players</h1>
+
+        <button onclick="openPlayerModal()">
+            Add Player
+        </button>
+    </div>
+
+    <input
+    type="text"
+    id="playerSearch"
+    placeholder="Search player">
+
+    <div id="playersGrid">
+
+    </div>
+
+</section>
+
+<!-- PLAYER PROFILE -->
+
+<section id="playerProfile" class="page">
+
+    <button onclick="showPage('players')">
+        Back
+    </button>
+
+    <h1 id="profileName">
+        Player Name
+    </h1>
+
+    <div class="profile-grid">
+
+        <div class="profile-card">
+            Matches
+            <span id="profileMatches"></span>
+        </div>
+
+        <div class="profile-card">
+            Wins
+            <span id="profileWins"></span>
+        </div>
+
+        <div class="profile-card">
+            Win Rate
+            <span id="profileWinrate"></span>
+        </div>
+
+        <div class="profile-card">
+            ELO
+            <span id="profileElo"></span>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- LEADERBOARD -->
+
+<section id="leaderboard" class="page">
+
+    <h1>Leaderboard</h1>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Points</th>
+                <th>Wins</th>
+                <th>ELO</th>
+            </tr>
+        </thead>
+
+        <tbody id="leaderboardBody">
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<!-- TOURNAMENTS -->
+
+<section id="tournaments" class="page">
+
+    <div class="section-header">
+
+        <h1>Tournaments</h1>
+
+        <button onclick="openTournamentModal()">
+            Create
+        </button>
+
+    </div>
+
+    <div id="tournamentsGrid">
+
+    </div>
+
+</section>
+
+<!-- MATCHES -->
+
+<section id="matches" class="page">
+
+    <div class="section-header">
+
+        <h1>Matches</h1>
+
+        <button onclick="openMatchModal()">
+            Record Match
+        </button>
+
+    </div>
+
+    <div id="matchesTable">
+
+    </div>
+
+</section>
+
+<!-- SEASONS -->
+
+<section id="seasons" class="page">
+
+    <div class="section-header">
+
+        <h1>Seasons</h1>
+
+        <button onclick="openSeasonModal()">
+            New Season
+        </button>
+
+    </div>
+
+    <div id="seasonGrid">
+
+    </div>
+
+</section>
+
+<!-- ACHIEVEMENTS -->
+
+<section id="achievements" class="page">
+
+    <h1>Achievements</h1>
+
+    <div id="achievementGrid">
+
+    </div>
+
+</section>
+
+<!-- STATISTICS -->
+
+<section id="statistics" class="page">
+
+    <h1>Statistics</h1>
+
+    <div class="charts">
+
+        <canvas id="winsChart"></canvas>
+
+        <canvas id="pointsChart"></canvas>
+
+        <canvas id="eloChart"></canvas>
+
+        <canvas id="performanceChart"></canvas>
+
+    </div>
+
+</section>
+
+<!-- HALL OF FAME -->
+
+<section id="halloffame" class="page">
+
+    <h1>Hall Of Fame</h1>
+
+    <div id="hallOfFame">
+
+    </div>
+
+</section>
+
+<!-- ADMIN -->
+
+<section id="admin" class="page">
+
+    <h1>Admin Panel</h1>
+
+    <div class="admin-actions">
+
+        <button onclick="exportData()">
+            Export Data
+        </button>
+
+        <button onclick="importData()">
+            Import Data
+        </button>
+
+        <button onclick="clearData()">
+            Clear Data
+        </button>
+
+    </div>
+
+</section>
+
+</div>
+
+<!-- MODALS -->
+
+<div id="playerModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Add Player</h2>
+
+        <input id="playerName"
+        placeholder="Player Name">
+
+        <input id="playerUsername"
+        placeholder="Username">
+
+        <button onclick="addPlayer()">
+            Save
+        </button>
+
+    </div>
+
+</div>
+
+<div id="tournamentModal"
+class="modal">
+
+    <div class="modal-content">
+
+        <h2>Create Tournament</h2>
+
+        <input id="tournamentName">
+
+        <button onclick="addTournament()">
+            Create
+        </button>
+
+    </div>
+
+</div>
+
+<div id="matchModal"
+class="modal">
+
+    <div class="modal-content">
+
+        <h2>Record Match</h2>
+
+        <button onclick="saveMatch()">
+            Save Match
+        </button>
+
+    </div>
+
+</div>
+
+<div id="seasonModal"
+class="modal">
+
+    <div class="modal-content">
+
+        <h2>Create Season</h2>
+
+        <button onclick="addSeason()">
+            Create
+        </button>
+
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
 </body>
 </html>
